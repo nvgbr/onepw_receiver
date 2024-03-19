@@ -43,3 +43,30 @@ openai_api_key = (
     UserSettings(str(CODING_SETTINGS)).get_onepw_item("openai_api_key", "api").value
 )
 ```
+
+2. Example
+
+```python
+from dotenv import load_dotenv
+from onepw_receiver.usersettings import UserSettings
+
+# load Environemtn Variables from the .env file
+load_dotenv(".env")
+
+settings = UserSettings(str('/path/to/settings.toml'))
+
+pinterest_refresh_token = (
+    settings.get_onepw_item("pinterest_api_credentials", "api", field_name="credential")
+    .value
+)
+
+pinterest_app_secret = (
+    settings.get_onepw_item("pinterest_api_credentials", "api", field_name="app_secret")
+    .value
+)
+
+pinterest_app_id = (
+    settings.get_onepw_item("pinterest_api_credentials", "api", field_name="app_id")
+    .value
+)
+```

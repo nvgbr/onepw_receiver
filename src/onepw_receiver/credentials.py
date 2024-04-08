@@ -98,7 +98,7 @@ class OnePasswordItem:
         vault_dict = self._get_vault_dict()
         return vault_dict.get(self.vault_name, "")
 
-    def set_environment_key(self, key: str):
+    def set_key_as_environment_key(self, key: str):
         """Set an environment variable using provided key and instance 'value' attribute.
 
         With the provided key, this method sets an environment variable using the 'value' attribute of the OnePasswordItem class instance.

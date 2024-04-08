@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict
+from typing import Dict
 
 import tomlkit
 from tomlkit import TOMLDocument
@@ -47,31 +47,30 @@ class UserSettings:
     settings_file: str
     settings_file_content: dict
 
-
     def __init__(self, absolute_settings_file_path: str):
         self.settings_file_path = absolute_settings_file_path
         if not os.path.exists(self.settings_file_path):
-            logger.error(f'File not found: {self.settings_file_path}')
+            logger.error(f"File not found: {self.settings_file_path}")
             raise FileNotFoundError
         self.config_dir = os.path.dirname(os.path.realpath(self.settings_file_path))
         self.settings_file = self.settings_file_path
         self.settings_file_content = self._read_settings_file()
-        logger.debug(f'Instanciated UserSettings with {self.settings_file}')
-
+        logger.debug(f"Instanciated UserSettings with {self.settings_file}")
 
     def _read_settings_file(self) -> Dict:
         """Returns the unwrapped settings file content."""
-        with open(self.settings_file, "rt",
-                  encoding="utf-8", ) as secrets_file:
+        with open(
+            self.settings_file,
+            "rt",
+            encoding="utf-8",
+        ) as secrets_file:
             file_content: TOMLDocument = tomlkit.load(secrets_file)
             logger.debug(f"Got file content from {secrets_file}")
             return file_content.unwrap()
 
-
     def get_section(self, section: str):
         """Returns the section name from the settings file."""
         return self.settings_file_content.get(section)
-
 
     def get_item(self, item: str, section: str):
         """Get the value of a specified item from a given section in user settings.
@@ -86,13 +85,11 @@ class UserSettings:
         section = self.get_section(section)
         return section.get(item)
 
-
     def _settings_item_exists(self, item: str, section: str):
         """Checks if a settings item exists."""
         return item in self.settings_file_content[section]
 
-
-    def get_onepw_item(self, settings_item, settings_section, field_name='credential'):
+    def get_onepw_item(self, settings_item, settings_section, field_name="credential"):
         """Retrieve an item from OnePassword according to the given settings_item and settings_section.
 
         Args:
@@ -107,7 +104,6 @@ class UserSettings:
         item = self.get_item(settings_item, settings_section)
         onepw_item = OnePasswordItem(item=item, field_name=field_name)
         return onepw_item
-
 
     def set_environment_key(self, item: str, section: str, key: str):
         """Set a given key in the environment.
@@ -124,10 +120,8 @@ class UserSettings:
         onepw_item.set_environment_key(key)
         return onepw_item
 
-
     def _update_secrets_item(self):
         return NotImplementedError
-
 
     def _write_secrets_file(self):
         return NotImplementedError

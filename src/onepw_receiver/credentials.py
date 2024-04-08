@@ -3,10 +3,7 @@ import os
 from typing import Dict
 
 from dotenv import load_dotenv
-from onepasswordconnectsdk.client import (
-    Client,
-    new_client_from_environment,
-    )
+from onepasswordconnectsdk.client import Client, new_client_from_environment
 
 from .rich_configs import logger
 
@@ -49,20 +46,17 @@ class OnePasswordItem:
     # Creating client using OP_CONNECT_TOKEN and OP_CONNECT_HOST env vars
     client: Client = new_client_from_environment()
 
-
     def __init__(self, item, field_name, section=None):
-        self.vault_name = os.getenv('OP_VAULT')
+        self.vault_name = os.getenv("OP_VAULT")
         self.vault_id = self._get_vault_id()
         self.item = item
         self.field_name = field_name
         self.section = section
         self.value = self._get_field_value()
 
-
     def _get_item(self):
         onepw_item = self.client.get_item(self.item, self.vault_id)
         return {field.label: field.value for field in onepw_item.fields}
-
 
     def _get_field_value(self):
         """Return the value of a specified field for the specified 1Password item.
@@ -81,7 +75,6 @@ class OnePasswordItem:
         """
         return self._get_item().get(self.field_name, self.section)
 
-
     def _get_vault_dict(self) -> Dict[str, str]:
         """Return a dictionary of available 1Password vault names and their IDs.
         Returns:
@@ -92,7 +85,6 @@ class OnePasswordItem:
         vaults = OnePasswordItem.client.get_vaults()
         vault_dict = {self.item.name: self.item.id for self.item in vaults}
         return vault_dict
-
 
     def _get_vault_id(self) -> str:
         """Return the ID of the specified vault name.
@@ -105,7 +97,6 @@ class OnePasswordItem:
         """
         vault_dict = self._get_vault_dict()
         return vault_dict.get(self.vault_name, "")
-
 
     def set_environment_key(self, key: str):
         """Set an environment variable using provided key and instance 'value' attribute.

@@ -17,7 +17,7 @@ last_30_days = today - timedelta(days=30)
 install(show_locals=False)
 
 logging.basicConfig(
-    level="ERROR",
+    level="INFO",
     format="%(message)s",
     datefmt="[%X]",
     handlers=[

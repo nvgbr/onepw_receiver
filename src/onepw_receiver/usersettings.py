@@ -1,6 +1,8 @@
-import os
+from pathlib import Path
+from types import SimpleNamespace
 from typing import Dict
 
+import dotenv
 import tomlkit
 from tomlkit import TOMLDocument
 
@@ -41,19 +43,15 @@ class UserSettings:
         To get the .env variables, use the load_dotenv method before instantiating the UserSettings class.
     """
 
-    settings_file_path: str
-    config_dir: str
-    root_path: str
-    settings_file: str
+    absolute_settings_file_path: str
+    settings_file: Path
     settings_file_content: dict
 
     def __init__(self, absolute_settings_file_path: str):
-        self.settings_file_path = absolute_settings_file_path
-        if not os.path.exists(self.settings_file_path):
-            logger.error(f"File not found: {self.settings_file_path}")
+        self.settings_file = Path(absolute_settings_file_path)
+        if not Path.exists(self.settings_file):
+            logger.error(f"File not found: {self.settings_file}")
             raise FileNotFoundError
-        self.config_dir = os.path.dirname(os.path.realpath(self.settings_file_path))
-        self.settings_file = self.settings_file_path
         self.settings_file_content = self._read_settings_file()
         logger.debug(f"Instanciated UserSettings with {self.settings_file}")
 
@@ -99,10 +97,31 @@ class UserSettings:
         Returns:
             OnePasswordItem: The item fetched from OnePassword.
         """
+
         from .credentials import OnePasswordItem
 
-        item = self.get_item(settings_item, settings_section)
-        onepw_item = OnePasswordItem(item=item, field_name=field_name)
+        try:
+            item = self.get_item(settings_item, settings_section)
+            onepw_item = OnePasswordItem(item=item, field_name=field_name)
+        except Exception as e:
+            logger.error(
+                f"{e}\nget_onepw_item(\n    {settings_item=},\n    {settings_section=},\n    {field_name=})"
+            )
+            logger.error(
+                f"There was an error retrieving the item from One Password. \n\nDefine the values in your environemnt file if the error persists.",
+            )
+
+            onepw_item = SimpleNamespace(key=settings_item.upper(), value=None)
+            onepw_item = _get_value_from_environemnt_file_if_one_pw_server_is_gone(onepw_item)
+        finally:
+            return onepw_item
+
+    def _get_value_from_environemnt_file_if_one_pw_server_is_gone(self, onepw_item):
+        logger.info(f"Retrieving value from {onepw_item.key=}")
+        dotenv_file = dotenv.find_dotenv(filename=".env", usecwd=True)
+        logger.debug(f"dotenv found: {dotenv_file=}")
+        onepw_item.value = dotenv.get_key(dotenv_file, onepw_item.key)
+        logger.debug(f"Key {onepw_item=}")
         return onepw_item
 
     def set_environment_key(self, item: str, section: str, key: str):
@@ -116,8 +135,9 @@ class UserSettings:
         Returns:
             None
         """
+        logger.debug("Setting environment key")
         onepw_item = self.get_onepw_item(item, section).value
-        onepw_item.set_environment_key(key)
+        onepw_item.set_key_as_environment_key(key)
         return onepw_item
 
     def _update_secrets_item(self):

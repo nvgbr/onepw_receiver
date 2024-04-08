@@ -1,18 +1,21 @@
-[project]
+[tool.poetry]
 name = "onepw-receiver"
 version = "0.1.0"
 description = ""
 authors = ["fant5y <vroni@salala.de>"]
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
-dependencies = [
-    "onepasswordconnectsdk ~= 1",
-    "rich ~= 13",
-    "python-dotenv",
-    "tomlkit ~= 0.12.4"
+packages = [
+    { include = "onepw_receiver", from = "src" },
 ]
 
-[project.optional-dependencies]
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+onepasswordconnectsdk = "^1"
+rich = "^13"
+python-dotenv = "*"
+tomlkit = "^0.12.4"
+
+[tool.poetry.group.dev.dependencies]
 black = { extras = ["d"], version = "^24" }
 isort = "^5"
 mypy = "^1.9"
@@ -21,12 +24,12 @@ pylint = "^3.1.0"
 
 
 [tool.black]
-line-length = 88
+line-length = 99
 target-version = ["py311"]
 
 [tool.isort]
 profile = "black"
-line_length = 88
+line_length = 99
 extra_standard_library = ["pytest"]
 
 [mypy]
@@ -40,5 +43,5 @@ show_error_codes = true
 show_error_context = true
 
 [build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

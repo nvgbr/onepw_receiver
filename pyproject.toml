@@ -1,26 +1,23 @@
-[tool.poetry]
+[project]
 name = "onepw-receiver"
 version = "0.1.0"
-description = ""
-authors = ["fant5y <vroni@salala.de>"]
-readme = "README.md"
-packages = [
-    { include = "onepw_receiver", from = "src" },
+description = "A Package to receive Passwords and other items from your OnePassword Server"
+authors = [
+    { name = "Veronika Haberzettl", email = "vroni@salala.de" },
 ]
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.13"
-onepasswordconnectsdk = "^1"
-rich = "^13"
-python-dotenv = "*"
-tomlkit = "^0.12.4"
+[project.urls]
+Issues = "https://github.com/nvgbr/onepw_receiver/issues"
 
-[tool.poetry.group.dev.dependencies]
-black = { extras = ["d"], version = "^24" }
-isort = "^5"
-mypy = "^1.9"
-pipreqs = "^0.5"
-pylint = "^3.1.0"
+[project.optional-dependencies]
+dev = ["black", "mypy", "isort"]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+include = ["onepw_receiver*"]  # package names should match these glob patterns (["*"] by default)
 
 
 [tool.black]
@@ -32,7 +29,7 @@ profile = "black"
 line_length = 99
 extra_standard_library = ["pytest"]
 
-[mypy]
+[tool.mypy]
 warn_return_any = false
 warn_unused_configs = true
 no_implicit_optional = true
@@ -43,5 +40,5 @@ show_error_codes = true
 show_error_context = true
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

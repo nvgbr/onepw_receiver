@@ -1,9 +1,9 @@
 import os
-from typing import Any, Dict
-
+from typing import Any, Dict, Union
+from pathlib import Path
 import tomlkit
 from tomlkit import TOMLDocument
-
+from configparser import ConfigParser
 try:
     import tomllib
 except ModuleNotFoundError:
@@ -19,7 +19,7 @@ class UserSettings:
     This class represents a user settings object that is used to read and manipulate settings from a configuration file.
 
     Attributes:
-    - settings_file_path (str): The absolute path to the settings file.
+    - settings_file_path (str): The absolute path to the settings file (must be a TOML file.)
     - config_dir (str): The directory path where the settings file is located.
     - root_path (str): The root path of the project.
     - settings_file (str): The path of the settings file.
@@ -41,31 +41,45 @@ class UserSettings:
         To get the .env variables, use the load_dotenv method before instantiating the UserSettings class.
     """
 
-    settings_file_path: str
+    settings_file_path: Path
     config_dir: str
     root_path: str
-    settings_file: str
+    settings_file: Path
     settings_file_content: dict
 
 
-    def __init__(self, absolute_settings_file_path: str):
-        self.settings_file_path = absolute_settings_file_path
-        if not os.path.exists(self.settings_file_path):
+    def __init__(self, absolute_settings_file_path: Union[str,Path]):
+        self.settings_file = Path(absolute_settings_file_path)
+        if not Path.is_file(self.settings_file):
             logger.error(f'File not found: {self.settings_file_path}')
             raise FileNotFoundError
-        self.config_dir = os.path.dirname(os.path.realpath(self.settings_file_path))
-        self.settings_file = self.settings_file_path
-        self.settings_file_content = self._read_settings_file()
+        self.config_dir = self.settings_file.parent.resolve()
+        if self.settings_file.suffix == '.toml':
+            self.settings_file_content = self._read_toml_settings_file()
+        elif self.settings_file.suffix == '.ini':
+            self.settings_file_content = self._read_ini_settings_file()
         logger.debug(f'Instanciated UserSettings with {self.settings_file}')
 
 
-    def _read_settings_file(self) -> Dict:
+    def _read_toml_settings_file(self) -> Dict:
         """Returns the unwrapped settings file content."""
         with open(self.settings_file, "rt",
                   encoding="utf-8", ) as secrets_file:
             file_content: TOMLDocument = tomlkit.load(secrets_file)
             logger.debug(f"Got file content from {secrets_file}")
             return file_content.unwrap()
+
+    #
+    # def _read_ini_settings_file(self) -> Dict:
+    #     """Open settings ini and return the contents.
+    #
+    #     Returns:
+    #         dict: The contents of the settings file.
+    #     """
+    #     config = ConfigParser()
+    #     return config.read(self.settings_file)
+    def get_item_from_environment(self):
+        return os.getenv(self.item)
 
 
     def get_section(self, section: str):

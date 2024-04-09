@@ -16,27 +16,25 @@ from .rich_configs import logger
 
 
 class UserSettings:
-    """UserSettings class
-
-    This class represents a user settings object that is used to read and manipulate settings from a configuration file.
+    """This class represents a user settings object that is used to read and manipulate settings from a configuration file.
 
     Attributes:
-    - settings_file_path (str): The absolute path to the settings file.
-    - config_dir (str): The directory path where the settings file is located.
-    - root_path (str): The root path of the project.
-    - settings_file (str): The path of the settings file.
-    - settings_file_content (dict): The content of the settings file as a dictionary.
+        settings_file_path (str): The absolute path to the settings file.
+        config_dir (str): The directory path where the settings file is located.
+        root_path (str): The root path of the project.
+        settings_file (str): The path of the settings file.
+        settings_file_content (dict): The content of the settings file as a dictionary.
 
     Methods:
-    - __init__(self, absolute_settings_file_path: str): Initializes the UserSettings object.
-    - _read_settings_file(): Returns the unwrapped settings file content.
-    - get_section(section: str): Returns the section name from the settings file.
-    - get_item(item: str, section: str): Returns the value of the specified item in the given section.
-    - _settings_item_exists(item: str, section: str): Checks if a settings item exists.
-    - get_onepw_item(settings_item, settings_section): Returns a OnePasswordItem object for the specified item and section.
-    - set_environment_key(item: str, section: str, key: str): Sets an environment variable using the provided key and the value attribute of the OnePasswordItem.
-    - _update_secrets_item(): [Not Implemented]
-    - _write_secrets_file(): [Not Implemented]
+        __init__(absolute_settings_file_path: str): Initializes the UserSettings object.
+        _read_settings_file(): Returns the unwrapped settings file content.
+        get_section(section: str): Returns the section name from the settings file.
+        get_item(item: str, section: str): Returns the value of the specified item in the given section.
+        _settings_item_exists(item: str, section: str): Checks if a settings item exists.
+        get_onepw_item(settings_item, settings_section): Returns a OnePasswordItem object for the specified item and section.
+        set_environment_key(item: str, section: str, key: str): Sets an environment variable using the provided key and the value attribute of the OnePasswordItem.
+        _update_secrets_item(): [Not Implemented]
+        _write_secrets_file(): [Not Implemented]
 
     Notes:
         For the path to work, make sure (if you're on Windows) that you either pass the raw absolute settings file path, escape every backslash, or use the normcase method.

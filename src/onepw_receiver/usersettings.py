@@ -1,10 +1,9 @@
-from pathlib import Path
-from types import SimpleNamespace
-from typing import Dict
-
 import dotenv
 import tomlkit
+from pathlib import Path
 from tomlkit import TOMLDocument
+from types import SimpleNamespace
+from typing import Dict
 
 try:
     import tomllib
@@ -45,6 +44,7 @@ class UserSettings:
     settings_file: Path
     settings_file_content: dict
 
+
     def __init__(self, absolute_settings_file_path: str):
         self.settings_file = Path(absolute_settings_file_path)
         if not Path.exists(self.settings_file):
@@ -53,20 +53,23 @@ class UserSettings:
         self.settings_file_content = self._read_settings_file()
         logger.debug(f"Instanciated UserSettings with {self.settings_file}")
 
+
     def _read_settings_file(self) -> Dict:
         """Returns the unwrapped settings file content."""
         with open(
-            self.settings_file,
-            "rt",
-            encoding="utf-8",
-        ) as secrets_file:
+                self.settings_file,
+                "rt",
+                encoding="utf-8",
+                ) as secrets_file:
             file_content: TOMLDocument = tomlkit.load(secrets_file)
             logger.debug(f"Got file content from {secrets_file}")
             return file_content.unwrap()
 
+
     def get_section(self, section: str):
         """Returns the section name from the settings file."""
         return self.settings_file_content.get(section)
+
 
     def get_item(self, item: str, section: str):
         """Get the value of a specified item from a given section in user settings.
@@ -81,9 +84,11 @@ class UserSettings:
         section = self.get_section(section)
         return section.get(item)
 
+
     def _settings_item_exists(self, item: str, section: str):
         """Checks if a settings item exists."""
         return item in self.settings_file_content[section]
+
 
     def get_onepw_item(self, settings_item, settings_section, field_name="credential"):
         """Retrieve an item from OnePassword according to the given settings_item and settings_section.
@@ -103,16 +108,17 @@ class UserSettings:
             onepw_item = OnePasswordItem(item=item, field_name=field_name)
         except Exception as e:
             logger.error(
-                f"{e}\nget_onepw_item(\n    {settings_item=},\n    {settings_section=},\n    {field_name=})"
-            )
+                    f"{e}\nget_onepw_item(\n    {settings_item=},\n    {settings_section=},\n    {field_name=})"
+                    )
             logger.error(
-                f"There was an error retrieving the item from One Password. \n\nDefine the values in your environemnt file if the error persists.",
-            )
+                    f"There was an error retrieving the item from One Password. \n\nDefine the values in your environemnt file if the error persists.",
+                    )
 
             onepw_item = SimpleNamespace(key=settings_item.upper(), value=None)
             onepw_item = _get_value_from_environemnt_file_if_one_pw_server_is_gone(onepw_item)
         finally:
             return onepw_item
+
 
     def _get_value_from_environemnt_file_if_one_pw_server_is_gone(self, onepw_item):
         logger.info(f"Retrieving value from {onepw_item.key=}")
@@ -122,24 +128,33 @@ class UserSettings:
         logger.debug(f"Key {onepw_item=}")
         return onepw_item
 
-    def set_environment_key(self, item: str, section: str, key: str):
+
+    def set_environment_key(self, item: str, section: str, key: str) -> OnePasswordItem:
         """Set a given key in the environment.
 
+        This function retrieves an item from the settings file, sets it as an environment key,
+        and returns the item. If an error occurs during the process, it logs the error.
+
         Args:
-            item (str): Name of the item.
-            section (str): Name of the section.
-            key (str): Name of the key.
+            item (str): Name of the item in your settings file.
+            section (str): Name of the section where the item is written in your settings file.
+            key (str): Name of the environment key you want to set.
 
         Returns:
-            None
+            OnePasswordItem
         """
         logger.debug("Setting environment key")
-        onepw_item = self.get_onepw_item(item, section).value
-        onepw_item.set_key_as_environment_key(key)
-        return onepw_item
+        try:
+            onepw_item = self.get_onepw_item(item, section)
+            onepw_item.set_key_as_environment_key(key)
+            return onepw_item
+        except Exception as e:
+            logger.error(f"{e}\nset_environment_key({item=}, {section=}, {key=})")
+
 
     def _update_secrets_item(self):
         return NotImplementedError
+
 
     def _write_secrets_file(self):
         return NotImplementedError

@@ -13,8 +13,8 @@ dependencies = [
     "rich",
     "tomli",
     "tomlkit",
-
 ]
+
 [project.urls]
 Issues = "https://github.com/nvgbr/onepw_receiver/issues"
 

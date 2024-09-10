@@ -1,16 +1,18 @@
-import dotenv
-import tomlkit
 from pathlib import Path
-from tomlkit import TOMLDocument
 from types import SimpleNamespace
 from typing import Dict
+
+import dotenv
+import tomlkit
+from tomlkit import TOMLDocument
 
 try:
     import tomllib
 except ModuleNotFoundError:
     # import tomli only if tomllib is not installed
-    import tomli as tomllib  # type:ignore
+    pass  # type:ignore
 
+from .credentials import OnePasswordItem
 from .rich_configs import logger
 
 

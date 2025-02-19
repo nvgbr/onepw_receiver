@@ -1,7 +1,8 @@
 # coding=utf-8
 import os
-from typing import Dict
 from dataclasses import dataclass
+from typing import Dict
+
 from dotenv import load_dotenv
 from onepasswordconnectsdk.client import Client, new_client_from_environment
 
@@ -45,7 +46,6 @@ class OnePasswordItem:
     section: str | None = None
     vault_name: str = os.getenv("OP_VAULT")
 
-
     #
     # def __init__(self, item: str, field_name: str = "credential", section=None):
     #     self.vault_name = os.getenv("OP_VAULT")
@@ -55,10 +55,10 @@ class OnePasswordItem:
     #     self.section = section
     #     self.value = self._get_field_value()
 
-
     @property
     def value(self):
         """Return the value of a specified field for the specified 1Password item.
+
         Args:
            item (str): The name or ID of the 1Password item to retrieve the
            field value from.
@@ -66,8 +66,10 @@ class OnePasswordItem:
            field_name (str): The name of the field whose value is to be retrieved.
            section (Optional[str]): The name of the section where the item is
            located.
+
         Returns:
            The value of the specified field for the specified 1Password item.
+
         Raises:
            Exception: If there is an error while retrieving the 1Password item
            or the field value.
@@ -77,10 +79,13 @@ class OnePasswordItem:
     @property
     def vault_id(self) -> str:
         """Return the ID of the specified vault name.
+
         Args:
            vault_name (str): The name of the vault whose ID is to be returned.
+
         Returns:
            str: The ID of the specified vault.
+
         Raises:
            Exception: If there is an error while retrieving the vault dictionary.
         """
@@ -90,22 +95,22 @@ class OnePasswordItem:
         vault_dict = self._get_vault_dict()
         return vault_dict.get(self.vault_name, "")
 
-
     def _get_item(self):
         onepw_item = self.client.get_item(self.item, self.vault_id)
         return {field.label: field.value for field in onepw_item.fields}
 
     def _get_vault_dict(self) -> Dict[str, str]:
         """Return a dictionary of available 1Password vault names and their IDs.
+
         Returns:
            dict: A dictionary of vault names and their IDs.
+
         Raises:
            Exception: If there is an error while retrieving vaults.
         """
         vaults = OnePasswordItem.client.get_vaults()
         vault_dict = {self.item.name: self.item.id for self.item in vaults}
         return vault_dict
-
 
     def set_key_as_environment_key(self, key: str):
         """Set an environment variable using provided key and instance 'value' attribute.
@@ -132,4 +137,6 @@ class OnePasswordItem:
             os.environ[upper_key] = self.value
             logger.info(f"Environment Variable: '{key}' has been set.")
         except Exception as e:
-            logger.error(f"{e}\nEnvironment Variable: '{key}' could not be set.")
+            logger.error(
+                f"{e}\nEnvironment Variable: '{key}' could not be set."
+            )

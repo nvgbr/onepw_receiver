@@ -12,7 +12,7 @@ except ModuleNotFoundError:
     # import tomli only if tomllib is not installed
     pass  # type:ignore
 
-from .credentials import OnePasswordItem
+from .onepassword_item import OnePasswordItem
 from .rich_configs import logger
 
 
@@ -68,7 +68,7 @@ class UserSettings:
             return file_content.unwrap()
 
 
-    def get_section(self, section: str):
+    def get_section_from_settings_file(self, section: str):
         """Returns the section name from the settings file."""
         return self.settings_file_content.get(section)
 
@@ -83,13 +83,13 @@ class UserSettings:
         Returns:
             any: Value of the item.
         """
-        section = self.get_section(section)
+        section = self.get_section_from_settings_file(section)
         return section.get(item)
 
 
     def _settings_item_exists(self, item: str, section: str):
         """Checks if a settings item exists."""
-        return item in self.settings_file_content[section]
+        return item in self.settings_file_content.get(section, "")
 
 
     def get_onepw_item(self, settings_item, settings_section, field_name="credential"):
@@ -103,7 +103,7 @@ class UserSettings:
             OnePasswordItem: The item fetched from OnePassword.
         """
 
-        from .credentials import OnePasswordItem
+        from .onepassword_item import OnePasswordItem
 
         try:
             item = self.get_item(settings_item, settings_section)

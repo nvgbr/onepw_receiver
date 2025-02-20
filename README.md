@@ -35,7 +35,7 @@ from onepw_receiver.onepw_item import OnePWItem
 
 load_dotenv()
 
-openai_api_key = OnePWItem(item=os.environ['OPENAI_API_KEY"])
+openai_api_key = OnePWItem(item=os.environ['OPENAI_API_KEY"]).value
 
 ```
 

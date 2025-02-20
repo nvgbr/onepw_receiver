@@ -24,6 +24,22 @@ You'll finde the 1Password UUID in 1Password at each item. Just click on the 3do
 ![](onepw_uuid_menu.png)
 
 
+## Other ways
+
+If you don't want to create a `settings.toml` you can put the UUIDs also into the .env file. In your code you than just import the OnePWItem like so
+
+```python
+import os
+from dotenen import load_dotenv
+from onepw_receiver.onepw_item import OnePWItem
+
+load_dotenv()
+
+openai_api_key = OnePWItem(item=os.environ['OPENAI_API_KEY"])
+
+```
+
+
 ## Example
 
 ```python

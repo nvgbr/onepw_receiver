@@ -39,13 +39,13 @@ class OnePasswordItem:
     load_dotenv()
 
     # Creating client using OP_CONNECT_TOKEN and OP_CONNECT_HOST env vars
-    client: Client = new_client_from_environment()
 
     item: str
     field_name: str = "credential"
     section: str | None = None
     vault_name: str = os.getenv("OP_VAULT")
 
+    client: Client = new_client_from_environment()
     #
     # def __init__(self, item: str, field_name: str = "credential", section=None):
     #     self.vault_name = os.getenv("OP_VAULT")

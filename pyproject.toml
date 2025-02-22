@@ -1,6 +1,6 @@
 [project]
 name = "onepw-receiver"
-version = "0.1.5"
+version = "0.1.6"
 description = "A Package to receive Passwords and other items from your OnePassword Server"
 authors = [
     { name = "Veronika Haberzettl", email = "vroni@salala.de" },
